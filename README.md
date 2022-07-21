@@ -18,7 +18,7 @@ GASShooter is current with **Unreal Engine 5.03**. There are branches of this Sa
 | Right Mouse Button  | (Left Trigger)	| Activates the weapon's secondary ability.                   |
 | Mouse Wheel Up      | ('Y' Button) 	| Swaps to next weapon in inventory.                          |
 | Mouse Wheel Down    | ( ~None ) 		| Swaps to previous weapon in inventory.                      |
-| R                   | ('X' Button		| Reloads the weapon.                                         |
+| R                   | ('X' Button)	| Reloads the weapon.                                         |
 | Left Ctrl           | (Left Bumper)	| Cancels targeting.                                          |
 | Left Shift          | (Left Stick Down) | Sprint.                                                     |
 | E                   | (D-Pad Left)	| Interact with interactable objects.                         |
