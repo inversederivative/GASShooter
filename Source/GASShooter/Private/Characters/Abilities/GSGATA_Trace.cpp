@@ -1,6 +1,10 @@
 // Copyright 2020 Dan Kestranek.
 
 
+// Transition to UE5 done by Inverse Derivative.
+//  If any changes were made, they were abreviated with "ID: "
+// Thanks!!!
+
 #include "Characters/Abilities/GSGATA_Trace.h"
 #include "AbilitySystemComponent.h"
 #include "DrawDebugHelpers.h"
@@ -191,8 +195,9 @@ void AGSGATA_Trace::LineTraceWithFilter(TArray<FHitResult>& OutHitResults, const
 	for (int32 HitIdx = 0; HitIdx < HitResults.Num(); ++HitIdx)
 	{
 		FHitResult& Hit = HitResults[HitIdx];
-
-		if (!Hit.Actor.IsValid() || FilterHandle.FilterPassesForActor(Hit.Actor))
+		// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+		//if (!Hit.Actor.IsValid() || FilterHandle.FilterPassesForActor(Hit.Actor))
+		if (!IsValid(Hit.GetActor()) || FilterHandle.FilterPassesForActor(Hit.GetActor()))
 		{
 			Hit.TraceStart = TraceStart;
 			Hit.TraceEnd = End;
@@ -349,11 +354,12 @@ TArray<FHitResult> AGSGATA_Trace::PerformTrace(AActor* InSourceActor)
 	{
 		// Clear any blocking hit results, invalid Actors, or actors out of range
 		//TODO Check for visibility if we add AIPerceptionComponent in the future
-		for (int32 i = PersistentHitResults.Num() - 1; i >= 0; i--)
-		{
-			FHitResult& HitResult = PersistentHitResults[i];
 
-			if (HitResult.bBlockingHit || !HitResult.Actor.IsValid() || FVector::DistSquared(TraceStart, HitResult.Actor.Get()->GetActorLocation()) > (MaxRange * MaxRange))
+		for (int32 i = PersistentHitResults.Num() - 1; i >= 0; i--) {
+			FHitResult& HitResult = PersistentHitResults[i];
+			// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+			//if (HitResult.bBlockingHit || !HitResult.Actor.IsValid() || FVector::DistSquared(TraceStart, HitResult.Actor.Get()->GetActorLocation()) > (MaxRange * MaxRange))
+			if (HitResult.bBlockingHit || !(IsValid(HitResult.GetActor()) || FVector::DistSquared(TraceStart, HitResult.GetActor()->GetActorLocation()) > (MaxRange * MaxRange)))
 			{
 				PersistentHitResults.RemoveAt(i);
 			}
@@ -391,7 +397,10 @@ TArray<FHitResult> AGSGATA_Trace::PerformTrace(AActor* InSourceActor)
 			{
 				// This is looping backwards so that further objects from player are added first to the queue.
 				// This results in closer actors taking precedence as the further actors will get bumped out of the TArray.
-				if (HitResult.Actor.IsValid() && (!HitResult.bBlockingHit || PersistentHitResults.Num() < 1))
+
+				// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+				//if (HitResult.Actor.IsValid() && (!HitResult.bBlockingHit || PersistentHitResults.Num() < 1))
+				if (IsValid(HitResult.GetActor()) && (!HitResult.bBlockingHit || PersistentHitResults.Num() < 1))
 				{
 					bool bActorAlreadyInPersistentHits = false;
 
@@ -400,7 +409,9 @@ TArray<FHitResult> AGSGATA_Trace::PerformTrace(AActor* InSourceActor)
 					{
 						FHitResult& PersistentHitResult = PersistentHitResults[k];
 
-						if (PersistentHitResult.Actor.Get() == HitResult.Actor.Get())
+						// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+						//if (PersistentHitResult.Actor.Get() == HitResult.Actor.Get())
+						if (PersistentHitResult.GetActor() == HitResult.GetActor())
 						{
 							bActorAlreadyInPersistentHits = true;
 							break;
@@ -429,13 +440,17 @@ TArray<FHitResult> AGSGATA_Trace::PerformTrace(AActor* InSourceActor)
 				{
 					if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActors[ReticleIndex].Get())
 					{
-						const bool bHitActor = HitResult.Actor != nullptr;
+						// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+						//const bool bHitActor = HitResult.Actor != nullptr;
+						const bool bHitActor = HitResult.GetActor() != nullptr;
 
 						if (bHitActor && !HitResult.bBlockingHit)
 						{
 							LocalReticleActor->SetActorHiddenInGame(false);
 
-							const FVector ReticleLocation = (bHitActor && LocalReticleActor->bSnapToTargetedActor) ? HitResult.Actor->GetActorLocation() : HitResult.Location;
+							// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+							//const FVector ReticleLocation = (bHitActor && LocalReticleActor->bSnapToTargetedActor) ? HitResult.Actor->GetActorLocation() : HitResult.Location;
+							const FVector ReticleLocation = (bHitActor && LocalReticleActor->bSnapToTargetedActor) ? HitResult.GetActor()->GetActorLocation() : HitResult.Location;
 
 							LocalReticleActor->SetActorLocation(ReticleLocation);
 							LocalReticleActor->SetIsTargetAnActor(bHitActor);
@@ -498,13 +513,17 @@ TArray<FHitResult> AGSGATA_Trace::PerformTrace(AActor* InSourceActor)
 
 			if (AGameplayAbilityWorldReticle* LocalReticleActor = ReticleActors[PersistentHitResultIndex].Get())
 			{
-				const bool bHitActor = HitResult.Actor != nullptr;
+				// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+				
+				const bool bHitActor = HitResult.GetActor() != nullptr;
 
 				if (bHitActor && !HitResult.bBlockingHit)
 				{
 					LocalReticleActor->SetActorHiddenInGame(false);
 
-					const FVector ReticleLocation = (bHitActor && LocalReticleActor->bSnapToTargetedActor) ? HitResult.Actor->GetActorLocation() : HitResult.Location;
+					// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+					//const FVector ReticleLocation = (bHitActor && LocalReticleActor->bSnapToTargetedActor) ? HitResult.Actor->GetActorLocation() : HitResult.Location;
+					const FVector ReticleLocation = (bHitActor && LocalReticleActor->bSnapToTargetedActor) ? HitResult.GetActor()->GetActorLocation() : HitResult.Location;
 
 					LocalReticleActor->SetActorLocation(ReticleLocation);
 					LocalReticleActor->SetIsTargetAnActor(bHitActor);

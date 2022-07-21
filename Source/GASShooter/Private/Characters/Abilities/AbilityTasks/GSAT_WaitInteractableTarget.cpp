@@ -67,10 +67,15 @@ void UGSAT_WaitInteractableTarget::LineTrace(FHitResult& OutHitResult, const UWo
 	{
 		const FHitResult& Hit = HitResults[HitIdx];
 
-		if (!Hit.Actor.IsValid() || Hit.Actor != Ability->GetCurrentActorInfo()->AvatarActor.Get())
+		// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+		//if (!Hit.Actor.IsValid() || Hit.Actor != Ability->GetCurrentActorInfo()->AvatarActor.Get())
+		if (!(IsValid(Hit.GetActor())) || Hit.GetActor() != Ability->GetCurrentActorInfo()->AvatarActor.Get())
 		{
 			// If bLookForInteractableActor is false, we're looking for an endpoint to trace to
-			if (bLookForInteractableActor && Hit.Actor.IsValid())
+
+			// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+			//if (bLookForInteractableActor && Hit.Actor.IsValid())
+			if ( bLookForInteractableActor && IsValid( Hit.GetActor()) )
 			{
 				// bLookForInteractableActor is true, hit component must overlap COLLISION_INTERACTABLE trace channel
 				// This is so that a big Actor like a computer can have a small interactable button.
@@ -78,9 +83,13 @@ void UGSAT_WaitInteractableTarget::LineTrace(FHitResult& OutHitResult, const UWo
 					== ECollisionResponse::ECR_Overlap)
 				{
 					// Component/Actor must be available to interact
-					bool bIsInteractable = Hit.Actor.Get()->Implements<UGSInteractable>();
+					// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+					//bool bIsInteractable = Hit.Actor.Get()->Implements<UGSInteractable>();
+					bool bIsInteractable = Hit.GetActor()->Implements<UGSInteractable>();
 
-					if (bIsInteractable && IGSInteractable::Execute_IsAvailableForInteraction(Hit.Actor.Get(), Hit.Component.Get()))
+					// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+					//if (bIsInteractable && IGSInteractable::Execute_IsAvailableForInteraction(Hit.Actor.Get(), Hit.Component.Get()))
+					if (bIsInteractable && IGSInteractable::Execute_IsAvailableForInteraction(Hit.GetActor(), Hit.Component.Get()))
 					{
 						OutHitResult = Hit;
 						OutHitResult.bBlockingHit = true; // treat it as a blocking hit
@@ -223,7 +232,10 @@ void UGSAT_WaitInteractableTarget::PerformTrace()
 		// No valid, available Interactable Actor
 
 		ReturnHitResult.Location = TraceEnd;
-		if (TargetData.Num() > 0 && TargetData.Get(0)->GetHitResult()->Actor.Get())
+
+		// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+		//if (TargetData.Num() > 0 && TargetData.Get(0)->GetHitResult()->Actor.Get())
+		if (TargetData.Num() > 0 && TargetData.Get(0)->GetHitResult()->GetActor())
 		{
 			// Previous trace had a valid Interactable Actor, now we don't have one
 			// Broadcast last valid target
@@ -240,9 +252,13 @@ void UGSAT_WaitInteractableTarget::PerformTrace()
 
 		if (TargetData.Num() > 0)
 		{
-			const AActor* OldTarget = TargetData.Get(0)->GetHitResult()->Actor.Get();
+			// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+			//const AActor* OldTarget = TargetData.Get(0)->GetHitResult()->Actor.Get();
+			const AActor* OldTarget = TargetData.Get(0)->GetHitResult()->GetActor();
 
-			if (OldTarget == ReturnHitResult.Actor.Get())
+			// -ID: Usage of Hit.Actor has been depreciated with UE5. Use Hit.GetActor() instead.
+			//if (OldTarget == ReturnHitResult.Actor.Get())
+			if (OldTarget == ReturnHitResult.GetActor())
 			{
 				// Old target is the same as the new target, don't broadcast the target
 				bBroadcastNewTarget = false;

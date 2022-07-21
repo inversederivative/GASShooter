@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/WidgetComponent.h"
 #include "GSDamageTextWidgetComponent.generated.h"
 

@@ -299,7 +299,10 @@ float UGSAbilitySystemComponent::PlayMontageForMesh(UGameplayAbility* InAnimatin
 
 			AnimMontageInfo.LocalMontageInfo.AnimMontage = NewAnimMontage;
 			AnimMontageInfo.LocalMontageInfo.AnimatingAbility = InAnimatingAbility;
-			AnimMontageInfo.LocalMontageInfo.PlayBit = !AnimMontageInfo.LocalMontageInfo.PlayBit;
+			// ID: The use of LocalMontageInfo.Playbit has been depreciated. Use PlayInstanceId Instead.
+			//  Please Note: UE4 Playbit is a boolean, however, UE5's PlayInstanceId is a uint8. Handle with care.
+			//AnimMontageInfo.LocalMontageInfo.PlayBit = !AnimMontageInfo.LocalMontageInfo.PlayBit;
+			AnimMontageInfo.LocalMontageInfo.PlayInstanceId = !AnimMontageInfo.LocalMontageInfo.PlayInstanceId;
 			
 			if (InAbility)
 			{
@@ -320,7 +323,11 @@ float UGSAbilitySystemComponent::PlayMontageForMesh(UGameplayAbility* InAnimatin
 					// Those are static parameters, they are only set when the montage is played. They are not changed after that.
 					FGameplayAbilityRepAnimMontageForMesh& AbilityRepMontageInfo = GetGameplayAbilityRepAnimMontageForMesh(InMesh);
 					AbilityRepMontageInfo.RepMontageInfo.AnimMontage = NewAnimMontage;
-					AbilityRepMontageInfo.RepMontageInfo.ForcePlayBit = !bool(AbilityRepMontageInfo.RepMontageInfo.ForcePlayBit);
+
+					// ID: The use of RepMontageInfo.ForcePlayBit has been depreciated. Use PlayInstanceId Instead.
+					//  Please Note: PlayInstanceId and ForcePlayBit essentially do the same thing.
+					//AbilityRepMontageInfo.RepMontageInfo.ForcePlayBit = !bool(AbilityRepMontageInfo.RepMontageInfo.ForcePlayBit);
+					AbilityRepMontageInfo.RepMontageInfo.PlayInstanceId = !bool(AbilityRepMontageInfo.RepMontageInfo.PlayInstanceId);
 
 					// Update parameters that change during Montage life time.
 					AnimMontage_UpdateReplicatedDataForMesh(InMesh);
@@ -722,7 +729,10 @@ void UGSAbilitySystemComponent::AnimMontage_UpdateForcedPlayFlagsForMesh(FGamepl
 {
 	FGameplayAbilityLocalAnimMontageForMesh& AnimMontageInfo = GetLocalAnimMontageInfoForMesh(OutRepAnimMontageInfo.Mesh);
 
-	OutRepAnimMontageInfo.RepMontageInfo.ForcePlayBit = AnimMontageInfo.LocalMontageInfo.PlayBit;
+	// ID: The use of RepMontageInfo.ForcePlayBit has been depreciated. Use PlayInstanceId Instead.
+	//  Please Note: PlayInstanceId and ForcePlayBit essentially do the same thing.
+	//OutRepAnimMontageInfo.RepMontageInfo.ForcePlayBit = AnimMontageInfo.LocalMontageInfo.PlayBit;
+	OutRepAnimMontageInfo.RepMontageInfo.PlayInstanceId = AnimMontageInfo.LocalMontageInfo.PlayInstanceId;
 }
 
 void UGSAbilitySystemComponent::OnRep_ReplicatedAnimMontageForMesh()
@@ -766,7 +776,11 @@ void UGSAbilitySystemComponent::OnRep_ReplicatedAnimMontageForMesh()
 					NewRepMontageInfoForMesh.RepMontageInfo.BlendTime,
 					NewRepMontageInfoForMesh.RepMontageInfo.NextSectionID,
 					NewRepMontageInfoForMesh.RepMontageInfo.IsStopped,
-					NewRepMontageInfoForMesh.RepMontageInfo.ForcePlayBit);
+
+					// ID: The use of RepMontageInfo.ForcePlayBit has been depreciated. Use PlayInstanceId Instead.
+					//  Please Note: PlayInstanceId and ForcePlayBit essentially do the same thing.
+					//NewRepMontageInfoForMesh.RepMontageInfo.ForcePlayBit);
+					NewRepMontageInfoForMesh.RepMontageInfo.PlayInstanceId);
 				ABILITY_LOG(Warning, TEXT("\tLocalAnimMontageInfo.AnimMontage: %s\n\tPosition: %f"),
 					*GetNameSafe(AnimMontageInfo.LocalMontageInfo.AnimMontage), AnimInstance->Montage_GetPosition(AnimMontageInfo.LocalMontageInfo.AnimMontage));
 			}
@@ -774,10 +788,19 @@ void UGSAbilitySystemComponent::OnRep_ReplicatedAnimMontageForMesh()
 			if (NewRepMontageInfoForMesh.RepMontageInfo.AnimMontage)
 			{
 				// New Montage to play
-				const bool ReplicatedPlayBit = bool(NewRepMontageInfoForMesh.RepMontageInfo.ForcePlayBit);
-				if ((AnimMontageInfo.LocalMontageInfo.AnimMontage != NewRepMontageInfoForMesh.RepMontageInfo.AnimMontage) || (AnimMontageInfo.LocalMontageInfo.PlayBit != ReplicatedPlayBit))
+
+
+				// ID: The use of RepMontageInfo.ForcePlayBit has been depreciated. Use PlayInstanceId Instead.
+				//  Please Note: PlayInstanceId and ForcePlayBit essentially do the same thing.
+				//const bool ReplicatedPlayBit = bool(NewRepMontageInfoForMesh.RepMontageInfo.ForcePlayBit);
+				const uint8 ReplicatedPlayBit = NewRepMontageInfoForMesh.RepMontageInfo.PlayInstanceId;
+
+				// ID: The use of LocalMontageInfo.Playbit has been depreciated. Use PlayInstanceId Instead.
+				//  Please Note: UE4 Playbit is a boolean, however, UE5's PlayInstanceId is a uint8. Handle with care.
+				//if ((AnimMontageInfo.LocalMontageInfo.AnimMontage != NewRepMontageInfoForMesh.RepMontageInfo.AnimMontage) || (AnimMontageInfo.LocalMontageInfo.PlayBit != ReplicatedPlayBit))
+				if ((AnimMontageInfo.LocalMontageInfo.AnimMontage != NewRepMontageInfoForMesh.RepMontageInfo.AnimMontage) || (AnimMontageInfo.LocalMontageInfo.PlayInstanceId != ReplicatedPlayBit))
 				{
-					AnimMontageInfo.LocalMontageInfo.PlayBit = ReplicatedPlayBit;
+					AnimMontageInfo.LocalMontageInfo.PlayInstanceId = ReplicatedPlayBit;
 					PlayMontageSimulatedForMesh(NewRepMontageInfoForMesh.Mesh, NewRepMontageInfoForMesh.RepMontageInfo.AnimMontage, NewRepMontageInfoForMesh.RepMontageInfo.PlayRate);
 				}
 
