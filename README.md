@@ -10,18 +10,18 @@ Assets included come from Epic Games' ShooterGame learning project, Epic Games' 
 
 GASShooter is current with **Unreal Engine 5.03**. There are branches of this Sample Project for older versions of Unreal Engine, but they are no longer supported and are liable to have bugs or out of date information.
 
-| Keybind             | Action                                                      |
-| ------------------- | ----------------------------------------------------------- |
-| T                   | Toggles between first and third person.                     |
-| Left Mouse Button   | Activates the weapon's primary ability. Confirms targeting. |
-| Middle Mouse Button | Activates the weapon's alternate ability.                   |
-| Right Mouse Button  | Activates the weapon's secondary ability.                   |
-| Mouse Wheel Up      | Swaps to next weapon in inventory.                          |
-| Mouse Wheel Down    | Swaps to previous weapon in inventory.                      |
-| R                   | Reloads the weapon.                                         |
-| Left Ctrl           | Cancels targeting.                                          |
-| Left Shift          | Sprint.                                                     |
-| E                   | Interact with interactable objects.                         |
+| Keybind             | Xbox Controller	| Action                                                      |
+| ------------------- | ----------------- | ----------------------------------------------------------- |
+| T    	          | (D-Pad Up) 		| Toggles between first and third person.                     |
+| Left Mouse Button   | (Right Trigger) 	| Activates the weapon's primary ability. Confirms targeting. |
+| Middle Mouse Button | (D-Pad Right) 	| Activates the weapon's alternate ability.                   |
+| Right Mouse Button  | (Left Trigger)	| Activates the weapon's secondary ability.                   |
+| Mouse Wheel Up      | ('Y' Button) 	| Swaps to next weapon in inventory.                          |
+| Mouse Wheel Down    | ( ~None ) 		| Swaps to previous weapon in inventory.                      |
+| R                   | ('X' Button		| Reloads the weapon.                                         |
+| Left Ctrl           | (Left Bumper)	| Cancels targeting.                                          |
+| Left Shift          | (Left Stick Down) | Sprint.                                                     |
+| E                   | (D-Pad Left)	| Interact with interactable objects.                         |
 
 | Console Command | Action                  |
 | --------------- | ----------------------- |
